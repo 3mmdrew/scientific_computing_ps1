@@ -38,19 +38,19 @@ def upd_concentration(c, D, delta_t, delta_x):
     c_next[0, 1:N] = c_next[N - 1, 1:N]  # Left edge wraps to right
     c_next[N, 1:N] = c_next[1, 1:N]  # Right edge wraps to left
 
-    # # Apply periodic boundary conditions in the x-direction
-    # for j in range (1,N):
-    #     c_next[N,j] = (
-    #             c[N, j]
-    #             + (delta_t * D / delta_x**2)
-    #             * (c[1, j] + c[N - 1, j] + c[N, j + 1] + c[N, j - 1] - 4 * c[N, j])
-    #         )
+    # Apply periodic boundary conditions in the x-direction
+    for j in range (1,N):
+        c_next[N,j] = (
+                c[N, j]
+                + (delta_t * D / delta_x**2)
+                * (c[1, j] + c[N - 1, j] + c[N, j + 1] + c[N, j - 1] - 4 * c[N, j])
+            )
         
-    # c_next[0, 1:N] = c_next[N, 1:N]
+    c_next[0, 1:N] = c_next[N, 1:N]
 
-    # Apply fixed boundary conditions
-    c_next[:, N] = 1.0  # Top boundary
-    c_next[:, 0] = 0.0  # Bottom boundary
+    # # Apply fixed boundary conditions
+    # c_next[:, N] = 1.0  # Top boundary
+    # c_next[:, 0] = 0.0  # Bottom boundary
 
     return c_next
 

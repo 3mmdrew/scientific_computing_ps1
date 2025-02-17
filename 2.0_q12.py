@@ -68,34 +68,44 @@ def upd_concentration(c, D, delta_t, delta_x):
 
     return c_next
 
+for i in range(1000000):
+    c = upd_concentration(c, D, delta_t, delta_x)
+
+grid = np.zeros((N + 1, N + 1))
+grid[:, :] = np.tile(c, (N + 1, 1)).T  # Correct raster update
+
+plt.imshow(grid,  origin='lower' )
+plt.title(f"Concentration at step{1000000}") 
+plt.colorbar()
+plt.show()
+
 ### SIMULATION
 
-x_values = np.linspace(0, 1, N + 1)
-y_values = np.linspace(0, 1, N + 1)
+# x_values = np.linspace(0, 1, N + 1)
+# y_values = np.linspace(0, 1, N + 1)
+
+# # Animatie instellen
+# fig = plt.figure()
+# ax = plt.axes()
+# grid = np.zeros((N + 1, N + 1))
+# im = ax.imshow(np.zeros((N + 1, N + 1)), origin='lower', vmin=0, vmax=1,  cmap='inferno')
+# cbar = plt.colorbar(im)
+# #ax.set_title("Concentration over time")
 
 
-# Animatie instellen
-fig = plt.figure()
-ax = plt.axes()
-grid = np.zeros((N + 1, N + 1))
-im = ax.imshow(np.zeros((N + 1, N + 1)), origin='lower', vmin=0, vmax=1,  cmap='inferno')
-cbar = plt.colorbar(im)
-#ax.set_title("Concentration over time")
+# def update(frame):
+#     global c
+#     global t
+#     c = upd_concentration(c, D, delta_t, delta_x)
+#     t += delta_t
+#     grid[:, :] = np.tile(c, (N + 1, 1)).T  # Correct raster update
+#     im.set_array(grid)
+#     ax.set_title(f"Concentration at t = {t:.2f}") 
+#     return im
 
+# ani = animation.FuncAnimation(fig, update, frames=simulation_steps, interval=50)
+# ani.save("concentration_simulation.gif", writer=animation.PillowWriter(fps=30))
 
-def update(frame):
-    global c
-    global t
-    c = upd_concentration(c, D, delta_t, delta_x)
-    t += delta_t
-    grid[:, :] = np.tile(c, (N + 1, 1)).T  # Correct raster update
-    im.set_array(grid)
-    ax.set_title(f"Concentration at t = {t:.2f}") 
-    return im
-
-ani = animation.FuncAnimation(fig, update, frames=simulation_steps, interval=50)
-ani.save('concentration_over_time.mp4', writer = 'ffmpeg', fps = 30) 
-plt.show()
 
 
 # # Plot the concentration profile
