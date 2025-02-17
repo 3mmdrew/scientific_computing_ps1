@@ -4,10 +4,38 @@ from scipy.special import erfc
 from tqdm import tqdm
 import matplotlib.animation as animation
 
+
+### ANALYTIC SOLUTION FOR COMPARISON
+def analytic_solution(x, t, D, num_terms):
+    if t == 0:
+        return 0  # Boundary condition
+    solution = 0
+    for i in range(num_terms):
+        term1 = erfc((1 - x + 2 * i) / (2 * np.sqrt(D * t)))
+        term2 = erfc((1 + x + 2 * i) / (2 * np.sqrt(D * t)))
+        solution += term1 - term2
+    return solution
+
+stepping_history = {}
+analysis_history = {}
+
+
+# for t in tqdm(range(simulation_steps), desc="Diffusing:"):
+#     c = upd_concentration(c, D, delta_t, delta_x)
+
+    
+#     if t*delta_t in [0, 0.001, 0.01, 0.1, 1.0]:
+#         stepping_history[t*delta_t] = c
+    
+#     if t*delta_t in [0, 1.0]:
+#         analysis_history[t*delta_t] = [analytic_solution(x, t, D, simulation_steps) for x in x_values] 
+     
+
 # Parameters
 N = 50
 D = 1
 L = 1.0  # Domain
+t = 0
 delta_x = L / N
 
 max_delta_t = delta_x**2 / (4 * D)
@@ -40,70 +68,33 @@ def upd_concentration(c, D, delta_t, delta_x):
 
     return c_next
 
-
-### ANALYTIC SOLUTION FOR COMPARISON
-def analytic_solution(x, t, D, num_terms):
-    if t == 0:
-        return 0  # Boundary condition
-    solution = 0
-    for i in range(num_terms):
-        term1 = erfc((1 - x + 2 * i) / (2 * np.sqrt(D * t)))
-        term2 = erfc((1 + x + 2 * i) / (2 * np.sqrt(D * t)))
-        solution += term1 - term2
-    return solution
-
-
 ### SIMULATION
 
 x_values = np.linspace(0, 1, N + 1)
 y_values = np.linspace(0, 1, N + 1)
 
-stepping_history = {}
-analysis_history = {}
-
-
-for t in tqdm(range(simulation_steps), desc="Diffusing:"):
-    c = upd_concentration(c, D, delta_t, delta_x)
-
-    
-    if t*delta_t in [0, 0.001, 0.01, 0.1, 1.0]:
-        stepping_history[t*delta_t] = c
-    
-    if t*delta_t in [0, 1.0]:
-        analysis_history[t*delta_t] = [analytic_solution(x, t, D, simulation_steps) for x in x_values] 
-     
-
-# grid = np.zeros((N + 1, N + 1))
-# for i in range(0,N+1):
-#     for j in range(0,N+1):
-#         grid[i,j] = c[i]
-
-# plt.imshow( grid,  origin='lower' )
-# plt.title(f"Concentration at t = {simulation_steps*delta_t}") 
-# plt.colorbar()
-# plt.show()
-
 
 # Animatie instellen
-fig, ax = plt.subplots()
+fig = plt.figure()
+ax = plt.axes()
 grid = np.zeros((N + 1, N + 1))
-im = ax.imshow(np.zeros((N + 1, N + 1)), origin='lower', vmin=0, vmax=1)
+im = ax.imshow(np.zeros((N + 1, N + 1)), origin='lower', vmin=0, vmax=1,  cmap='inferno')
 cbar = plt.colorbar(im)
-ax.set_title("Concentration over time")
+#ax.set_title("Concentration over time")
 
-# Only show frames at t =  0.1, 0.2, 0.3, etc.
-# valid_frames = [int(t / delta_t) for t in np.arange(0.1, simulation_steps * delta_t, 0.1)]
 
 def update(frame):
     global c
-    #steps_to_run = valid_frames[frame] - (valid_frames[frame - 1] if frame > 0 else 0)
+    global t
     c = upd_concentration(c, D, delta_t, delta_x)
+    t += delta_t
     grid[:, :] = np.tile(c, (N + 1, 1)).T  # Correct raster update
     im.set_array(grid)
-    ax.set_title(f"Concentration at t = ") #{t:.2f}
-    return [im]
+    ax.set_title(f"Concentration at t = {t:.2f}") 
+    return im
 
 ani = animation.FuncAnimation(fig, update, frames=simulation_steps, interval=50)
+ani.save('concentration_over_time.mp4', writer = 'ffmpeg', fps = 30) 
 plt.show()
 
 
