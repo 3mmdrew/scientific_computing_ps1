@@ -3,6 +3,6 @@
 ### Assignment Group 16
 This repository contains the code and plots utilised for researching numerical methods for solving one- and two-dimensional partial differential equations. 
 
-The REPO contains the prescribed assignment in [**assignment.pdf**](.github/assignment.pdf)
+The REPO contains the prescribed assignment in [**assignment.pdf**](assignment.pdf)
 
-[**LICENSE**](.github/LICENSE.md)
+[**LICENSE**](LICENSE.md)
